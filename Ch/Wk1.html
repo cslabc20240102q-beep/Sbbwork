@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>形近字練習｜互動版</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
+            background: linear-gradient(145deg, #f7f0fc 0%, #e9def0 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 48px 48px 32px 32px;
+            padding: 30px 25px 40px;
+            box-shadow: 0 20px 60px rgba(106, 13, 173, 0.15);
+            border: 2px solid #fff;
+        }
+        h1 {
+            font-size: 2.2rem;
+            color: #4a2c6d;
+            text-align: center;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        h1 small {
+            font-size: 1rem;
+            background: #6b3e8f;
+            color: #fff;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        .subhead {
+            text-align: center;
+            color: #6b4f7a;
+            font-size: 1.1rem;
+            border-bottom: 3px dashed #d9c6e6;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .score-area {
+            background: #2d1b3e;
+            color: #ffd966;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: inset 0 -3px 0 #6b4f7a;
+        }
+        .part {
+            background: #ffffffd6;
+            border-radius: 28px;
+            padding: 20px 18px 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 0 #d4c0e0, 0 10px 20px rgba(0,0,0,0.05);
+            border: 1px solid #f1e6f9;
+        }
+        .part-title {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #3d2652;
+            border-left: 12px solid #a87bc7;
+            padding-left: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .part-title span {
+            background: #a87bc7;
+            color: #fff;
+            font-size: 0.9rem;
+            padding: 2px 14px;
+            border-radius: 30px;
+        }
+        .question-card {
+            background: #f9f5ff;
+            border-radius: 20px;
+            padding: 15px 18px 18px;
+            margin-bottom: 18px;
+            border: 2px solid #ece3f5;
+            transition: all 0.15s;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .question-card:hover {
+            border-color: #c7adde;
+            background: #fffbfe;
+        }
+        .q-icon {
+            font-size: 2.2rem;
+            background: #e8ddf0;
+            width: 58px;
+            height: 58px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: inset 0 -4px 0 #b69ece;
+        }
+        .q-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .q-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2e1e3f;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
+        .q-text .blank-highlight {
+            color: #a53fbb;
+            background: #f0e4f8;
+            padding: 0 8px;
+            border-radius: 12px;
+            border-bottom: 4px solid #b27ac9;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 18px;
+        }
+        .option-btn {
+            background: #fff;
+            border: 3px solid #dacae9;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #341f47;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 3px 0 #c0aad4;
+            min-width: 60px;
+            text-align: center;
+            font-family: inherit;
+        }
+        .option-btn:hover {
+            transform: translateY(-2px);
+            background: #f3ebfc;
+            border-color: #a67ac4;
+        }
+        .option-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #c0aad4;
+        }
+        .option-btn.selected {
+            background: #d4bbeb;
+            border-color: #7f52a3;
+            color: #1f112b;
+            box-shadow: 0 3px 0 #5d3a7a;
+        }
+        .option-btn.correct-answer {
+            background: #b3e0b3;
+            border-color: #1f8b4c;
+            color: #0a3d1d;
+            box-shadow: 0 3px 0 #0f6b34;
+            pointer-events: none;
+        }
+        .option-btn.wrong-answer {
+            background: #f8c9c9;
+            border-color: #b33f3f;
+            color: #5c1a1a;
+            box-shadow: 0 3px 0 #8f2b2b;
+            pointer-events: none;
+        }
+        .option-btn.disabled-true {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .action-bar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0 10px;
+        }
+        .btn-primary {
+            background: #6b3e8f;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 16px 48px;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #3d2352;
+            transition: all 0.07s ease;
+            letter-spacing: 2px;
+            border: 2px solid #8f65b0;
+            font-family: inherit;
+        }
+        .btn-primary:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #3d2352;
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #3d2352;
+            pointer-events: none;
+        }
+        .btn-reset {
+            background: #e0d2ea;
+            border: none;
+            color: #3d2352;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 12px 32px;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #b69ec9;
+            transition: all 0.07s ease;
+            border: 2px solid #fff;
+            font-family: inherit;
+        }
+        .btn-reset:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #b69ec9;
+        }
+        .footer-note {
+            text-align: center;
+            margin-top: 25px;
+            color: #66507a;
+            font-size: 0.95rem;
+        }
+        .feedback-badge {
+            display: inline-block;
+            margin-left: 12px;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .q-icon { width: 44px; height: 44px; font-size: 1.8rem; }
+            .q-text { font-size: 1.05rem; }
+            .option-btn { padding: 6px 16px; font-size: 1rem; }
+            .btn-primary { padding: 12px 28px; font-size: 1.2rem; }
+            .part-title { font-size: 1.3rem; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <h1>
+        📚 形近字大挑戰
+        <small>一週練習</small>
+    </h1>
+    <div class="subhead">
+        <span>✏️ 選出正確的字，完成句子</span>
+        <span class="score-area" id="scoreDisplay">⭐ 0 / 32</span>
+    </div>
+
+    <!-- 題目將由 JavaScript 動態生成 -->
+    <div id="questionArea"></div>
+
+    <div class="action-bar">
+        <button class="btn-primary" id="checkBtn">✅ 檢查答案</button>
+        <button class="btn-reset" id="resetBtn">🔄 重新開始</button>
+    </div>
+    <div class="footer-note">
+        💡 點擊選項選擇答案，完成後按「檢查答案」核對。
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 題庫資料 ----------
+        const parts = [
+            { name: '第一部分', icon: '🌟', range: [0,7] },
+            { name: '第二部分', icon: '🌈', range: [8,15] },
+            { name: '第三部分', icon: '🍀', range: [16,23] },
+            { name: '第四部分', icon: '🏆', range: [24,31] }
+        ];
+
+        const questionsData = [
+            // Part 1 (1-8)
+            { text: '他品學（  ）優。', options: ['兼', '歉', '謙'], correct: 0, emoji: '🏅' },
+            { text: '請（  ）別真偽。', options: ['辨', '辯', '瓣'], correct: 0, emoji: '🔍' },
+            { text: '爺爺身體日漸（  ）弱。', options: ['哀', '衰', '衷'], correct: 1, emoji: '👴' },
+            { text: '弟弟（  ）開禮物。', options: ['折', '拆', '析'], correct: 1, emoji: '🎁' },
+            { text: '他（  ）極參與活動。', options: ['積', '績', '漬'], correct: 0, emoji: '⚽' },
+            { text: '爸爸（  ）失了錢包。', options: ['遺', '遣', '貴'], correct: 0, emoji: '💼' },
+            { text: '我迫不及（  ）要嘗。', options: ['待', '侍', '持'], correct: 0, emoji: '🍰' },
+            { text: '照片（  ）起回憶。', options: ['勾', '鉤', '溝'], correct: 0, emoji: '📸' },
+            // Part 2 (9-16)
+            { text: '房間（  ）然一新。', options: ['煥', '換', '喚'], correct: 0, emoji: '🏠' },
+            { text: '忘記帶（  ）照。', options: ['護', '戶', '滬'], correct: 0, emoji: '🛂' },
+            { text: '她（  ）得冠軍。', options: ['贏', '嬴', '羸'], correct: 0, emoji: '🏆' },
+            { text: '我們討（  ）問題。', options: ['論', '輪', '淪'], correct: 0, emoji: '💬' },
+            { text: '同學們要（  ）流值日。', options: ['輪', '論', '淪'], correct: 0, emoji: '🔄' },
+            { text: '請（  ）換新衣。', options: ['更', '梗', '哽'], correct: 0, emoji: '👗' },
+            { text: '增強（  ）力。', options: ['疫', '役', '沒'], correct: 0, emoji: '💪' },
+            { text: '做事要謹（  ）。', options: ['慎', '鎮', '填'], correct: 0, emoji: '🧐' },
+            // Part 3 (17-24)
+            { text: '活動豐（  ）。', options: ['盛', '勝', '乘'], correct: 0, emoji: '🎉' },
+            { text: '甜（  ）很美味。', options: ['點', '店', '沾'], correct: 0, emoji: '🍩' },
+            { text: '歸（  ）物品。', options: ['還', '環', '壞'], correct: 0, emoji: '📦' },
+            { text: '拖（  ）時間。', options: ['延', '廷', '誕'], correct: 0, emoji: '⏰' },
+            { text: '渾身（  ）抖。', options: ['顫', '擅', '憚'], correct: 0, emoji: '🥶' },
+            { text: '他的（  ）業是教師。', options: ['職', '織', '識'], correct: 0, emoji: '👨‍🏫' },
+            { text: '她喜歡編（  ）毛衣。', options: ['織', '職', '識'], correct: 0, emoji: '🧶' },
+            { text: '顏色是（  ）色。', options: ['線', '綠', '緣'], correct: 1, emoji: '🌿' },
+            // Part 4 (25-32)
+            { text: '建築（  ）房子。', options: ['造', '糙', '遭'], correct: 0, emoji: '🏗️' },
+            { text: '皮膚很粗（  ）。', options: ['糙', '造', '操'], correct: 0, emoji: '🖐️' },
+            { text: '（  ）子有毒。', options: ['蠍', '鍋', '渦'], correct: 0, emoji: '🦂' },
+            { text: '鐵（  ）炒菜。', options: ['鍋', '蠍', '渦'], correct: 0, emoji: '🍳' },
+            { text: '互相（  ）助。', options: ['幫', '弊', '蔽'], correct: 0, emoji: '🤝' },
+            { text: '考試作（  ）要不得。', options: ['弊', '幫', '蔽'], correct: 0, emoji: '📝' },
+            { text: '（  ）手告別。', options: ['揮', '輝', '暉'], correct: 0, emoji: '👋' },
+            { text: '光（  ）燦爛。', options: ['輝', '揮', '暉'], correct: 0, emoji: '☀️' }
+        ];
+
+        // ---------- 狀態 ----------
+        let selected = new Array(questionsData.length).fill(null); // 儲存選擇的 index
+        let checked = false;
+
+        const questionArea = document.getElementById('questionArea');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+
+        // ---------- 渲染題目 ----------
+        function renderQuestions() {
+            let html = '';
+            let qIndex = 0;
+
+            parts.forEach(part => {
+                const [start, end] = part.range;
+                html += `<div class="part">`;
+                html += `<div class="part-title">${part.icon} ${part.name} <span>第 ${start+1} - ${end+1} 題</span></div>`;
+
+                for (let i = start; i <= end; i++) {
+                    const q = questionsData[i];
+                    const selIdx = selected[i];
+                    html += `<div class="question-card" data-qindex="${i}">`;
+                    html += `<div class="q-icon">${q.emoji}</div>`;
+                    html += `<div class="q-content">`;
+                    html += `<div class="q-text">${q.text.replace('（  ）', '<span class="blank-highlight">（  ）</span>')}</div>`;
+                    html += `<div class="options" data-qindex="${i}">`;
+
+                    q.options.forEach((opt, optIdx) => {
+                        let cls = 'option-btn';
+                        if (selIdx === optIdx) cls += ' selected';
+                        // 如果已經檢查，加上 correct/wrong 樣式
+                        if (checked) {
+                            if (optIdx === q.correct) cls += ' correct-answer';
+                            else if (selIdx === optIdx && selIdx !== q.correct) cls += ' wrong-answer';
+                            // 若未選但顯示答案，可保留 disabled 但不額外加類
+                        }
+                        html += `<button class="${cls}" data-optidx="${optIdx}" data-qidx="${i}">${opt}</button>`;
+                    });
+
+                    html += `</div></div></div>`;
+                }
+                html += `</div>`;
+                qIndex++;
+            });
+
+            questionArea.innerHTML = html;
+            updateScore();
+        }
+
+        // ---------- 事件綁定 (委託) ----------
+        function attachEvents() {
+            // 選項點擊 (委託)
+            questionArea.addEventListener('click', function(e) {
+                const btn = e.target.closest('.option-btn');
+                if (!btn) return;
+                if (checked) return; // 檢查後不可更改
+
+                const qIdx = parseInt(btn.dataset.qidx);
+                const optIdx = parseInt(btn.dataset.optidx);
+                if (isNaN(qIdx) || isNaN(optIdx)) return;
+
+                // 更新狀態
+                selected[qIdx] = optIdx;
+                // 重新渲染 (保留檢查狀態)
+                renderQuestions();
+                // 重新綁定事件 (因為重新渲染了)
+                attachEvents();
+                // 更新分數顯示（但還沒檢查，只顯示已選數量）
+                updateScore();
+            });
+
+            // 檢查按鈕
+            document.getElementById('checkBtn').addEventListener('click', function() {
+                if (checked) {
+                    // 如果已經檢查，再次點擊可重新檢查（但不用重置顏色）
+                    // 只是重新計算分數
+                }
+                // 檢查是否全部選完
+                const allSelected = selected.every(idx => idx !== null);
+                if (!allSelected) {
+                    alert('📢 你還有題目未選完喔！完成所有題目再檢查吧！');
+                    return;
+                }
+                checked = true;
+                renderQuestions();
+                attachEvents();
+                updateScore();
+                // 滾動到頂部顯示分數
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // 重置按鈕
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                selected = new Array(questionsData.length).fill(null);
+                checked = false;
+                renderQuestions();
+                attachEvents();
+                updateScore();
+            });
+        }
+
+        // ---------- 更新分數 ----------
+        function updateScore() {
+            let correctCount = 0;
+            let total = questionsData.length;
+            if (checked) {
+                for (let i = 0; i < total; i++) {
+                    if (selected[i] !== null && selected[i] === questionsData[i].correct) {
+                        correctCount++;
+                    }
+                }
+            } else {
+                // 未檢查時顯示已選數量
+                const selectedCount = selected.filter(idx => idx !== null).length;
+                scoreDisplay.innerHTML = `📝 ${selectedCount} / ${total}`;
+                return;
+            }
+            scoreDisplay.innerHTML = `⭐ ${correctCount} / ${total}`;
+            if (correctCount === total) {
+                scoreDisplay.style.background = '#1f8b4c';
+                scoreDisplay.style.color = '#fff';
+            } else {
+                scoreDisplay.style.background = '#2d1b3e';
+                scoreDisplay.style.color = '#ffd966';
+            }
+        }
+
+        // ---------- 初始化 ----------
+        renderQuestions();
+        attachEvents();
+        // 初始分數顯示
+        updateScore();
+    })();
+</script>
+</body>
+</html>
